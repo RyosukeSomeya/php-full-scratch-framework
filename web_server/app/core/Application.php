@@ -143,10 +143,11 @@ abstract class Application
     protected function findController($controller_class)
     {
         if (!class_exists($controller_class)) {
-            // コントローラのクラスが読み込まれていない場合の処、クラスファイルのパスを生成
+            // コントローラのクラスが読み込み済みでない場合、クラスファイルのパスを生成し次の処理へ
             $controller_file = $this->getControllerDir() . '/' . $controller_class . '.php';
         }
 
+        //ファイルが存在し読み込み可能か判定
         if (!is_readable($controller_file)) {
             return false;
         } else {
