@@ -9,6 +9,9 @@
 // 抽象クラスなので、必ず継承されて子クラスで具体的に私用される
 abstract class Application
 {
+    /**
+     * 主にApplicationインスタンスの初期化処理
+     */
     protected $debug = false;
     protected $request;
     protected $response;
@@ -99,5 +102,62 @@ abstract class Application
     public function getWebDir()
     {
         return $this->getRootDir() . '/web';
+    }
+
+    public function run()
+    {
+        //Routerクラスのresolveメソッドからコントローラ名とアクション名を特定
+        $params = $this->router->resolve($this->request->getPathInfo());
+        if ($params === false) {
+            // to-do-A
+        }
+
+        $controller = $params['controller'];
+        $action     = $params['action'];
+
+        // アクションの実行
+        $this->runAction($controller, $action, $params);
+
+        // レスポンスを返す
+        $this->response->send();
+    }
+
+    /**
+     * コントローラーの呼び出し・実行等
+     */
+    public function runAction($controller_name, $action, $params = array())
+    {
+        // コントローラ名を生成
+        $controller_class = ucfirst($controller_name) . 'Controller'; // ucfirst()先頭を大文字にする関数
+
+        $controller = $this->findController($controller_class);
+        if ($controller === false) {
+            // to-do-B
+        }
+
+        $content = $controller->run($action, $params);
+
+        $this->response->setContent($content);
+    }
+
+    protected function findController($controller_class)
+    {
+        if (!class_exists($controller_class)) {
+            // コントローラのクラスが読み込まれていない場合の処、クラスファイルのパスを生成
+            $controller_file = $this->getControllerDir() . '/' . $controller_class . '.php';
+        }
+
+        if (!is_readable($controller_file)) {
+            return false;
+        } else {
+            // クラスファイルの読み込みを実行
+            require_once $controller_file;
+
+            if (!class_exists($controller_class)) {
+                return false;
+            }
+        }
+
+        return new $controller_class($this);
     }
 }
