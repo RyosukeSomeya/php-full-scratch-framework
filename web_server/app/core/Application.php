@@ -106,20 +106,47 @@ abstract class Application
 
     public function run()
     {
-        //Routerクラスのresolveメソッドからコントローラ名とアクション名を特定
-        $params = $this->router->resolve($this->request->getPathInfo());
-        if ($params === false) {
-            // to-do-A
+        try {
+            //Routerクラスのresolveメソッドからコントローラ名とアクション名を特定
+            $params = $this->router->resolve($this->request->getPathInfo());
+            if ($params === false) {
+                throw new HttpNotFoundException('No route found for' . $this->request->getPathInfo());
+            }
+
+            $controller = $params['controller'];
+            $action     = $params['action'];
+
+            // アクションの実行
+            $this->runAction($controller, $action, $params);
+        } catch (HttpNotFoundException $e) {
+            $this->render404Page($e);
         }
-
-        $controller = $params['controller'];
-        $action     = $params['action'];
-
-        // アクションの実行
-        $this->runAction($controller, $action, $params);
 
         // レスポンスを返す
         $this->response->send();
+    }
+
+    protected function render404Page($e)
+    {
+        $this->response->setStatusCode(404, 'Not Found');
+        $message = $this->isDebugMode() ? $e->getMessage(): 'Page not found.';
+        $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+
+        $this->response->setContent(<<<EOF
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>404</title>
+</head>
+<body>
+    { $message }
+</body>
+</html>
+EOF
+        );
     }
 
     /**
@@ -132,7 +159,7 @@ abstract class Application
 
         $controller = $this->findController($controller_class);
         if ($controller === false) {
-            // to-do-B
+            throw new HttpNotFoundException($controller_class . ' contoroller is not found.');
         }
 
         $content = $controller->run($action, $params);
