@@ -4,7 +4,7 @@ services:
     container_name: web_server
     build: ./web_server
     volumes:
-      - ./web_server/php:/var/www/app
+      - ./web_server/app:/var/www/app
     depends_on:
       - db
     ports:

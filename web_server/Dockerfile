@@ -10,6 +10,7 @@ RUN  yum -y install --enablerepo=remi,remi-php73 php php-mbstring php-xml php-xm
 
 # php設定
 COPY ./php.ini  /etc/php.ini
+COPY ./vhosts.conf /etc/httpd/conf.d/vhosts.conf
 
 # httpd 起動
 CMD ["/usr/sbin/httpd", "-DFOREGROUND"]
