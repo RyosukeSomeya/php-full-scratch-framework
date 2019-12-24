@@ -38,6 +38,7 @@ abstract class Application
         }
     }
 
+    // アプリケーションの初期化
     // 各クラスのインスタンスを生成
     protected function initialize()
     {
@@ -120,33 +121,14 @@ abstract class Application
             $this->runAction($controller, $action, $params);
         } catch (HttpNotFoundException $e) {
             $this->render404Page($e);
+
+        } catch (UnauthorizedActionException $e) {
+            list($controller, $action) = $this->login_action;
+            $this->runAction($controller, $action);
         }
 
         // レスポンスを返す
         $this->response->send();
-    }
-
-    protected function render404Page($e)
-    {
-        $this->response->setStatusCode(404, 'Not Found');
-        $message = $this->isDebugMode() ? $e->getMessage(): 'Page not found.';
-        $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
-
-        $this->response->setContent(<<<EOF
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>404</title>
-</head>
-<body>
-    { $message }
-</body>
-</html>
-EOF
-        );
     }
 
     /**
@@ -185,7 +167,30 @@ EOF
                 return false;
             }
         }
-
+        // contorollerのクラスの生成
         return new $controller_class($this);
+    }
+
+    protected function render404Page($e)
+    {
+        $this->response->setStatusCode(404, 'Not Found');
+        $message = $this->isDebugMode() ? $e->getMessage(): 'Page not found.';
+        $message = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+
+        $this->response->setContent(<<<EOF
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>404</title>
+</head>
+<body>
+    { $message }
+</body>
+</html>
+EOF
+        );
     }
 }
