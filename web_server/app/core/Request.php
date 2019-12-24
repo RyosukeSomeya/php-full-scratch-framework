@@ -58,11 +58,11 @@ class Request
     {
         $script_name = $_SERVER['SCRIPT_NAME'];
 
-        $requst_uri = $this->getRequestUri();
+        $request_uri = $this->getRequestUri();
 
         if (0 === strpos($request_uri, dirname($script_name))) {
             return $script_name;
-        } else if (0 === strops($request_uri, dirname($script_name))) {
+        } else if (0 === strpos($request_uri, dirname($script_name))) {
             return rtrim(dirname($script_name), '/');
         }
 
