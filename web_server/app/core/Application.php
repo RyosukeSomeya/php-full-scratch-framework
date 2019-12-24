@@ -185,7 +185,7 @@ EOF
                 return false;
             }
         }
-
+        // contorollerのクラスの生成
         return new $controller_class($this);
     }
 }
