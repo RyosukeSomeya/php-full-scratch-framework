@@ -11,6 +11,7 @@ abstract class Controller
     protected $response;
     protected $session;
     protected $db_manager;
+    protected $auth_actions = array();
 
     public function __construct($application)
     {
@@ -36,6 +37,10 @@ abstract class Controller
         $action_method = $action . 'Action';
         if (!method_exists($this, $action_method)) {
             $this->forward404();
+        }
+
+        if ($this->needsAuthentication($action) && !$this->session->isAuthenticated()) {
+            throw new UnauthorizedActionException();
         }
 
         // アクション実行
@@ -114,6 +119,23 @@ abstract class Controller
             unset($tokens[$pos]);
             $this->session->set($key,  $tokens);
 
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 指定されたアクションが認証済みでないとアクセスできないか判定
+     *
+     * @param string $action
+     * @return boolean
+     */
+    protected function needsAuthentication($action)
+    {
+        if ($this->auth_actions === true
+            || (is_array($this->auth_actions) && in_array($action, $this->auth_actions))
+        ) {
             return true;
         }
 
