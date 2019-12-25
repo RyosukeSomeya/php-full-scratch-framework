@@ -18,7 +18,7 @@ class DbManager
         ), $params);
 
         $con = new PDO(
-            $params['dns'],
+            $params['dsn'],
             $params['user'],
             $params['password'],
             $params['options']

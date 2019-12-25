@@ -58,7 +58,7 @@ abstract class Application
     // アプリケーションごととなるよう抽象メソッドとして定義
     abstract public function getRootDir();
 
-    abstract public function registerRoutes();
+    abstract protected function registerRoutes();
 
     public function isDebugMode()
     {
