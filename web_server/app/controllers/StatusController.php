@@ -1,33 +1,17 @@
 <?php
 
-class StatusRepository extends DbRepository
+class StatusController extends Controller
 {
-    public function insert($user_id, $body)
+    public function indexAction()
     {
-        $now = new DateTime();
+        $user = $this->session->get('user');
+        $statuses = $this->db_manager->get('Status')
+            ->fetchAllPersonalArchivesByUserId($user['id']);
 
-        $sql = "
-            INSERT INTO status(user_id, body, created_at)
-                VALUES(:user_id, :body, :created_at)
-        ";
-
-        $stmt = $this->execute($sql, array(
-            ':user_id' => $user_id,
-            ':body'    => $body,
-            ':created_at' => $now->format('Y-m-d H:i:s'),
+        return $this->render(array(
+            'statuses' => $statuses,
+            'body'     => '',
+            '_token'   => $this->generateCsrfToken('status/post'),
         ));
-    }
-
-    public function fetchAllPersonalArchivesByUser($user_id)
-    {
-        $sql = "
-            SELECT a.*, u.user_name
-                FROM status a
-                    LEFT JOIN user u ON a.user_id = u.id
-                WHERE u.id = :user_id
-                ORDER BY a.created_at DESC
-        ";
-
-        return $this->fetchAll($sql, array(':user_id' => $user_id));
     }
 }

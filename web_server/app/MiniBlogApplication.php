@@ -13,8 +13,10 @@ class MiniBlogApplication extends Application
     {
         // ルーティング定義配列を返す
         return array(
-            '/account' => array('controller' => 'account', 'action' => 'index'),
-            '/account/:action' => array('controller'  => 'account'),
+            '/'                => array('controller' => 'status', 'action' => 'index'),
+            '/status/post'     => array('controller' => 'status', 'action' => 'post'),
+            '/account'         => array('controller' => 'account', 'action' => 'index'),
+            '/account/:action' => array('controller' => 'account'),
         );
     }
 
