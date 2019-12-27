@@ -12,7 +12,10 @@ class MiniBlogApplication extends Application
     protected function registerRoutes()
     {
         // ルーティング定義配列を返す
-        return array();
+        return array(
+            '/account' => array('controller' => 'account', 'action' => 'index'),
+            '/account/:action' => array('controller'  => 'account'),
+        );
     }
 
     protected function configure()
