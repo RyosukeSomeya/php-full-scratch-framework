@@ -15,12 +15,11 @@ abstract class Controller
 
     public function __construct($application)
     {
-        $this->controller_name = strtolower(substr(get_class($this), 0, 10));
-
+        $this->controller_name = strtolower(substr(get_class($this), 0, -10));
         $this->application = $application;
-        $this->request     = $application->gerRequest();
-        $this->response    = $application->gerResponse();
-        $this->session     = $application->gerSession();
+        $this->request     = $application->getRequest();
+        $this->response    = $application->getResponse();
+        $this->session     = $application->getSession();
         $this->db_manager  = $application->getDbManager();
     }
 
@@ -32,9 +31,9 @@ abstract class Controller
     public function run($action, $params = array())
     {
         $this->action_name = $action;
-
         // メソッドの存在をチェック
         $action_method = $action . 'Action';
+
         if (!method_exists($this, $action_method)) {
             $this->forward404();
         }
@@ -45,15 +44,14 @@ abstract class Controller
 
         // アクション実行
         $content = $this->$action_method($params);
-
         return $content;
     }
 
-    protected function render($variables = array(), $templete = null, $layout = 'layout')
+    protected function render($variables = array(), $template = null, $layout = 'layout')
     {
         $defaults = array(
             'request'  => $this->request,
-            'base_url' => $this->request>getBaseUrl(),
+            'base_url' => $this->request->getBaseUrl(),
             'session'  => $this->session,
         );
 
@@ -61,7 +59,7 @@ abstract class Controller
         $view = new View($this->application->getViewDir(), $defaults);
 
         if (is_null($template)) {
-            $templete = $this->action_name;
+            $template = $this->action_name;
         }
 
         $path = $this->controller_name . '/' . $template;
@@ -71,7 +69,7 @@ abstract class Controller
 
     protected function forward404()
     {
-        throw new HttpNotFoundException('Forwarded 404 page from'
+        throw new HttpNotFoundException('Forwarded 404 page from '
             . $this->controller_name . '/' . $this->action_name);
     }
 

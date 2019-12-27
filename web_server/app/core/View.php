@@ -49,6 +49,8 @@ class View
                 )
             ));
         }
+
+        return $content;
     }
 
     public function  escape($string)
