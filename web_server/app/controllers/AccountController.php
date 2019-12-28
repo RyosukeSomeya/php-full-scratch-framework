@@ -2,6 +2,8 @@
 
 class AccountController extends Controller
 {
+    protected $auth_action = array('index', 'signin');
+
     public function signupAction()
     {
         return $this->render(array(

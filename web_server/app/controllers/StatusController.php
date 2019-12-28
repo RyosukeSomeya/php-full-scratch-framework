@@ -2,6 +2,8 @@
 
 class StatusController extends Controller
 {
+    protected $auth_action = array('index', 'post');
+
     public function indexAction()
     {
         $user = $this->session->get('user');
