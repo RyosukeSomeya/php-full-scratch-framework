@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title><?php if (isset($title)) : echo $this->escape($title) . ' - ';
             endif; ?>Mini Blog</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="/css/style.css">
 </head>
 
 <body>

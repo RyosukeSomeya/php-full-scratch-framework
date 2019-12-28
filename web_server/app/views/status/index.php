@@ -4,7 +4,7 @@
 <form action="<?php echo $base_url; ?>/status/post" method="post">
     <input type="hidden" name="_token" value="<?php echo $this->escape($_token); ?>">
     <?php if (isset($errors) && count($errors) > 0) : ?>
-        <li><?php echo $this->render('errors', array('errors' => $errors)); ?></li>
+        <?php echo $this->render('errors', array('errors' => $errors)); ?>
     <?php endif; ?>
     <textarea name="body" cols="60" rows="2"><?php echo $this->escape($body); ?></textarea>
 
