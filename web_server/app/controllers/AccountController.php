@@ -81,7 +81,7 @@ class AccountController extends Controller
         ));
     }
 
-    public function authentiateAction()
+    public function authenticateAction()
     {
         if ($this->session->isAuthenticated()) {
             return $this->redirect('/account');
@@ -131,5 +131,13 @@ class AccountController extends Controller
             'errors' => $errors,
             '_token' => $this->generateCsrfToken('account/signin'),
         ), 'signin');
+    }
+
+    public function signoutAction()
+    {
+        $this->session->clear();
+        $this->session->setAuthenticated(false);
+
+        return $this->redirect('/account/signin');
     }
 }
